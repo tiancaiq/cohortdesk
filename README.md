@@ -14,9 +14,15 @@ This demo runs locally. Follow [Run locally](#run-locally), then open `http://12
 | --- | --- |
 | `linchong` | `123456` |
 
-![CohortDesk dashboard showing the six work areas](assets/demo/cohortdesk-dashboard.png)
+### Cohort table
 
-[View cohort management](assets/demo/cohortdesk-cohorts.png) · [View employee analytics](assets/demo/cohortdesk-analytics.png)
+![Cohort management table with six seeded cohorts](assets/demo/cohortdesk-cohort-table.png)
+
+### Employee role graph
+
+![Bar graph of employees by role](assets/demo/cohortdesk-role-chart.png)
+
+[View dashboard](assets/demo/cohortdesk-dashboard.png) · [View cohort page](assets/demo/cohortdesk-cohorts.png) · [View full analytics page](assets/demo/cohortdesk-analytics.png)
 
 The included English seed starts with 5 departments, 6 employees, 6 cohorts, and 12 learners. All names and activity in the seed are synthetic.
 
