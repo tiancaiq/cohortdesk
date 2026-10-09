@@ -14,6 +14,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(UnauthorizedException.class)
+    public Result<String> handleUnauthorizedException(UnauthorizedException e) {
+        return Result.error(e.getMessage());
+    }
+
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(BusinessException.class)
     public Result<String> handleBusinessException( BusinessException e) {
@@ -28,6 +34,7 @@ public class GlobalExceptionHandler {
         return Result.error("System error. Try again later or contact an administrator");
     }
 
+    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
     @ExceptionHandler({DataAccessException.class, MyBatisSystemException.class})
     public Result<String> handleDataAccessException(Exception e) {
         log.error("Database access error（MySQL may be offline or unreachable）", e);

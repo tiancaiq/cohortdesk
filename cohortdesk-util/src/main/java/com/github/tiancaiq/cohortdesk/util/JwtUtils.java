@@ -4,28 +4,41 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
+import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 import java.util.Date;
 import java.util.Map;
 
 public class JwtUtils {
+    private static final byte[] SIGN_KEY = signingKey();
+    private static final long EXPIRE = 43200000L;
 
-    private static String signKey = "SVRIRUlNQQ==";
-    private static Long expire = 43200000L;
-
-    public static String generateJwt(Map<String,Object> claims){
-        String jwt = Jwts.builder()
-                .addClaims(claims)
-                .signWith(SignatureAlgorithm.HS256, signKey)
-                .setExpiration(new Date(System.currentTimeMillis() + expire))
-                .compact();
-        return jwt;
+    private static byte[] signingKey() {
+        String configured = System.getenv("COHORTDESK_JWT_SECRET");
+        if (configured != null && !configured.isBlank()) {
+            byte[] key = configured.getBytes(StandardCharsets.UTF_8);
+            if (key.length < 32) {
+                throw new IllegalStateException("COHORTDESK_JWT_SECRET must be at least 32 bytes.");
+            }
+            return key;
+        }
+        byte[] key = new byte[32];
+        new SecureRandom().nextBytes(key);
+        return key;
     }
 
-    public static Claims parseJWT(String jwt){
-        Claims claims = Jwts.parser()
-                .setSigningKey(signKey)
+    public static String generateJwt(Map<String, Object> claims) {
+        return Jwts.builder()
+                .addClaims(claims)
+                .signWith(SignatureAlgorithm.HS256, SIGN_KEY)
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRE))
+                .compact();
+    }
+
+    public static Claims parseJWT(String jwt) {
+        return Jwts.parser()
+                .setSigningKey(SIGN_KEY)
                 .parseClaimsJws(jwt)
                 .getBody();
-        return claims;
     }
 }

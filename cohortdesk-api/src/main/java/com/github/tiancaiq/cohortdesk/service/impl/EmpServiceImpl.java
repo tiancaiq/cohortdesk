@@ -129,6 +129,10 @@ public class EmpServiceImpl implements EmpService {
     @Transactional( rollbackFor = Exception.class )
     @Override
     public void updatePassword( Integer empId, String oldPassword, String newPassword ){
+        if (oldPassword == null || oldPassword.isBlank()
+                || newPassword == null || newPassword.isBlank()) {
+            throw new BusinessException("Enter both passwords.");
+        }
         Emp emp = empMapper.selectById( empId );
         if ( emp == null ){
             throw new BusinessException( "Employee not found" );

@@ -3,7 +3,7 @@ package com.github.tiancaiq.cohortdesk.controller;
 import com.github.tiancaiq.cohortdesk.model.Emp;
 import com.github.tiancaiq.cohortdesk.model.LoginInfo;
 import com.github.tiancaiq.cohortdesk.model.Result;
-import com.github.tiancaiq.cohortdesk.annotation.LogOperation;
+import com.github.tiancaiq.cohortdesk.exception.UnauthorizedException;
 import com.github.tiancaiq.cohortdesk.service.EmpService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class LoginController {
         if(loginInfo != null){
             return Result.success(loginInfo);
         }
-        return Result.error("Incorrect username or password.");
+        throw new UnauthorizedException("Incorrect username or password.");
     }
 
 }

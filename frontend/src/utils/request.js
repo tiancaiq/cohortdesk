@@ -52,7 +52,7 @@ request.interceptors.response.use(
                 errorMessage = data.error
             }
 
-            if (error.response.status === 401) {
+            if (error.response.status === 401 && error.config?.url !== '/login') {
                 localStorage.removeItem('loginUser')
                 notify('Session expired. Please sign in again.', 'error')
                 window.location.assign('/login')
