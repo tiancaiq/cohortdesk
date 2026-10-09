@@ -8,8 +8,7 @@ import com.github.tiancaiq.cohortdesk.model.Result;
 import com.github.tiancaiq.cohortdesk.model.dto.PasswordDto;
 import com.github.tiancaiq.cohortdesk.util.CurrentHolder;
 import com.github.tiancaiq.cohortdesk.annotation.LogOperation;
-import com.github.tiancaiq.cohortdesk.mapper.LoginLogMapper;
-import com.github.tiancaiq.cohortdesk.mapper.OperateLogMapper;
+import com.github.tiancaiq.cohortdesk.persistence.AuditRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -26,16 +25,14 @@ public class RecordLogAspect {
 
 
 
-    private final OperateLogMapper operateLogMapper;
+    private final AuditRepository repository;
     private final ObjectMapper jsonMapper;
-    private final LoginLogMapper loginLogMapper;
 
 
 
-    public RecordLogAspect( LoginLogMapper loginLogMapper, ObjectMapper jsonMapper, OperateLogMapper operateLogMapper ){
-        this.loginLogMapper = loginLogMapper;
+    public RecordLogAspect( AuditRepository repository, ObjectMapper jsonMapper ){
+        this.repository = repository;
         this.jsonMapper = jsonMapper;
-        this.operateLogMapper = operateLogMapper;
     }
 
 
@@ -81,7 +78,7 @@ public class RecordLogAspect {
             }
 
             try {
-                operateLogMapper.insert(operateLog);
+                repository.saveOperation(operateLog);
             } catch (Exception e) {
                 RecordLogAspect.log.error("Could not record operation log", e);
             }
@@ -120,7 +117,7 @@ public class RecordLogAspect {
             throw e;
         } finally {
             try {
-                loginLogMapper.insert( loginLog );
+                repository.saveLogin( loginLog );
             } catch (Exception e) {
                 log.error( "Could not record login log", e );
             }

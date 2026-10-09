@@ -4,10 +4,8 @@ import com.github.tiancaiq.cohortdesk.model.PageResult;
 import com.github.tiancaiq.cohortdesk.model.Student;
 import com.github.tiancaiq.cohortdesk.model.dto.StudentQueryParam;
 import com.github.tiancaiq.cohortdesk.exception.BusinessException;
-import com.github.tiancaiq.cohortdesk.mapper.StudentMapper;
+import com.github.tiancaiq.cohortdesk.persistence.CoreRepository;
 import com.github.tiancaiq.cohortdesk.service.StudentService;
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,23 +20,18 @@ public  class StudentServiceImpl implements StudentService {
 
 
 
-    private final StudentMapper studentMapper;
+    private final CoreRepository repository;
 
 
     @Autowired
-    public StudentServiceImpl( StudentMapper studentMapper ){
-        this.studentMapper = studentMapper;
+    public StudentServiceImpl( CoreRepository repository ){
+        this.repository = repository;
     }
 
 
     @Override
     public PageResult page( StudentQueryParam queryParam ){
-        PageHelper.startPage( queryParam.getPage(), queryParam.getPageSize() );
-
-        List< Student > studentList = studentMapper.selectByQuery( queryParam );
-        Page< Student > page = ( Page< Student> ) studentList;
-
-        return new PageResult( page.getTotal(), page.getResult() );
+        return repository.pageStudents(queryParam);
     }
 
     @Transactional( rollbackFor = Exception.class )
@@ -46,26 +39,26 @@ public  class StudentServiceImpl implements StudentService {
     public void save( Student student ){
         student.setCreateTime( LocalDateTime.now() );
         student.setUpdateTime( LocalDateTime.now() );
-        studentMapper.insert( student );
+        repository.saveStudent( student );
     }
 
     @Override
     public Student getById( Integer id ){
-        return studentMapper.selectById( id );
+        return repository.findStudent( id );
     }
 
     @Transactional( rollbackFor = Exception.class )
     @Override
     public void update( Student student ){
         student.setUpdateTime( LocalDateTime.now() );
-        studentMapper.update( student );
+        repository.updateStudent( student );
     }
 
     @Transactional( rollbackFor = Exception.class )
     @Override
     public void deleteByIds( List< Integer > ids ){
         ids = ids.stream().distinct().toList();
-        int affectedRows = studentMapper.deleteByIds( ids );
+        int affectedRows = repository.deleteStudents( ids );
         if ( affectedRows != ids.size() ){
             throw new BusinessException( "Some learners do not exist. Deletion failed" );
         }
@@ -73,13 +66,13 @@ public  class StudentServiceImpl implements StudentService {
 
     @Override
     public List< Student > list(){
-        return studentMapper.selectAll();
+        return repository.listStudents();
     }
 
     @Transactional( rollbackFor = Exception.class )
     @Override
     public void recordViolation( Integer id, Integer score ){
-        Student student = studentMapper.selectById( id );
+        Student student = repository.findStudent( id );
         if ( student == null ){
             throw new BusinessException( "Learner not found" );
         }
@@ -90,7 +83,7 @@ public  class StudentServiceImpl implements StudentService {
         student.setViolationScore( ( short ) (violationScore + score) );
 
         student.setUpdateTime( LocalDateTime.now() );
-        studentMapper.updateViolation( student );
+        repository.updateStudent( student );
     }
 
 

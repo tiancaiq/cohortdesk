@@ -5,11 +5,8 @@ import com.github.tiancaiq.cohortdesk.model.PageResult;
 import com.github.tiancaiq.cohortdesk.model.Student;
 import com.github.tiancaiq.cohortdesk.model.dto.ClazzQueryParam;
 import com.github.tiancaiq.cohortdesk.exception.BusinessException;
-import com.github.tiancaiq.cohortdesk.mapper.ClazzMapper;
-import com.github.tiancaiq.cohortdesk.mapper.StudentMapper;
+import com.github.tiancaiq.cohortdesk.persistence.CoreRepository;
 import com.github.tiancaiq.cohortdesk.service.ClazzService;
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,25 +21,18 @@ public class ClazzServiceImpl implements ClazzService {
 
 
 
-    private final ClazzMapper clazzMapper;
-    private final StudentMapper studentMapper;
+    private final CoreRepository repository;
 
 
     @Autowired
-    public ClazzServiceImpl( ClazzMapper clazzMapper, StudentMapper studentMapper ){
-        this.clazzMapper = clazzMapper;
-        this.studentMapper = studentMapper;
+    public ClazzServiceImpl( CoreRepository repository ){
+        this.repository = repository;
     }
 
 
     @Override
     public PageResult page( ClazzQueryParam queryParam ){
-        PageHelper.startPage( queryParam.getPage(), queryParam.getPageSize() );
-
-        List< Clazz > clazzList = clazzMapper.selectByQuery( queryParam );
-        Page< Clazz > page = ( Page< Clazz > ) clazzList;
-
-        return new PageResult( page.getTotal(), page.getResult() );
+        return repository.pageCohorts(queryParam);
     }
 
     @Transactional( rollbackFor = Exception.class )
@@ -50,12 +40,12 @@ public class ClazzServiceImpl implements ClazzService {
     public void save( Clazz clazz ){
         clazz.setCreateTime( LocalDateTime.now() );
         clazz.setUpdateTime( LocalDateTime.now() );
-        clazzMapper.insert( clazz );
+        repository.saveCohort( clazz );
     }
 
     @Override
     public Clazz getById( Integer id ){
-        return clazzMapper.selectById( id );
+        return repository.findCohort( id );
     }
 
     @Transactional( rollbackFor = Exception.class )
@@ -65,8 +55,7 @@ public class ClazzServiceImpl implements ClazzService {
         validateClazzName( clazz.getName() );
 
         clazz.setUpdateTime( LocalDateTime.now() );
-        int affectedRow = clazzMapper.updateById( clazz );
-        if ( affectedRow <= 0 ){
+        if ( !repository.updateCohort( clazz ) ){
             throw new BusinessException( "The cohort does not exist or no changes were made" );
         }
     }
@@ -75,20 +64,19 @@ public class ClazzServiceImpl implements ClazzService {
     @Transactional( rollbackFor = Exception.class )
     @Override
     public void deleteById( Integer id ){
-        List< Student > students = studentMapper.selectByClazzId( id );
+        List< Student > students = repository.studentsInCohort( id );
         if ( students != null && ! students.isEmpty() ){
             throw new BusinessException( "This cohort has learners and cannot be deleted" );
         }
 
-        int affectedRow = clazzMapper.deleteById( id );
-        if ( affectedRow <= 0 ){
+        if ( !repository.deleteCohort( id ) ){
             throw new BusinessException( "Cohort not found" );
         }
     }
 
     @Override
     public List< Clazz > list(){
-        return clazzMapper.selectAll();
+        return repository.listCohorts();
     }
 
 

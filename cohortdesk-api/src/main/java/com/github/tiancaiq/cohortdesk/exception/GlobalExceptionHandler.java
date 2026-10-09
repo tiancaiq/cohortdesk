@@ -2,7 +2,6 @@ package com.github.tiancaiq.cohortdesk.exception;
 
 import com.github.tiancaiq.cohortdesk.model.Result;
 import lombok.extern.slf4j.Slf4j;
-import org.mybatis.spring.MyBatisSystemException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
@@ -35,7 +34,7 @@ public class GlobalExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
-    @ExceptionHandler({DataAccessException.class, MyBatisSystemException.class})
+    @ExceptionHandler(DataAccessException.class)
     public Result<String> handleDataAccessException(Exception e) {
         log.error("Database access error（MySQL may be offline or unreachable）", e);
 

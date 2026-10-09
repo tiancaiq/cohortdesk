@@ -3,8 +3,7 @@ package com.github.tiancaiq.cohortdesk.service.impl;
 import com.github.tiancaiq.cohortdesk.model.Dept;
 import com.github.tiancaiq.cohortdesk.model.Emp;
 import com.github.tiancaiq.cohortdesk.exception.BusinessException;
-import com.github.tiancaiq.cohortdesk.mapper.DeptMapper;
-import com.github.tiancaiq.cohortdesk.mapper.EmpMapper;
+import com.github.tiancaiq.cohortdesk.persistence.CoreRepository;
 import com.github.tiancaiq.cohortdesk.service.DeptService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,37 +19,34 @@ public class DeptServiceImpl implements DeptService {
 
 
 
-    private final DeptMapper deptMapper;
-    private final EmpMapper empMapper;
+    private final CoreRepository repository;
 
 
     @Autowired
-    public DeptServiceImpl( DeptMapper deptMapper, EmpMapper empMapper ){
-        this.deptMapper = deptMapper;
-        this.empMapper = empMapper;
+    public DeptServiceImpl( CoreRepository repository ){
+        this.repository = repository;
     }
 
 
     @Override
     public List< Dept > findAll(){
-        return deptMapper.selectAll();
+        return repository.listDepartments();
     }
 
     @Override
     public Dept findById( Integer id ){
-        return deptMapper.selectById( id );
+        return repository.findDepartment( id );
     }
 
     @Transactional( rollbackFor = Exception.class )
     @Override
     public void deleteById( Integer id ){
-        List< Emp > empList = empMapper.selectByDeptId( id );
+        List< Emp > empList = repository.employeesInDepartment( id );
         if ( empList != null && ! empList.isEmpty() ){
             throw new BusinessException( "This department has employees and cannot be deleted, cannot be deleted" );
         }
 
-        int affectedRow = deptMapper.deleteById( id );
-        if ( affectedRow <= 0 ){
+        if ( !repository.deleteDepartment( id ) ){
             throw new BusinessException( "Department not found" );
         }
     }
@@ -60,7 +56,7 @@ public class DeptServiceImpl implements DeptService {
     public void add( Dept dept ){
         dept.setCreateTime( LocalDateTime.now() );
         dept.setUpdateTime( LocalDateTime.now() );
-        deptMapper.insert( dept );
+        repository.saveDepartment( dept );
     }
 
     @Transactional( rollbackFor = Exception.class )
@@ -68,7 +64,7 @@ public class DeptServiceImpl implements DeptService {
     public void updateById( Dept dept ){
         validateDeptId( dept.getId() );
         dept.setUpdateTime( LocalDateTime.now() );
-        deptMapper.updateById( dept );
+        repository.updateDepartment( dept );
     }
 
 

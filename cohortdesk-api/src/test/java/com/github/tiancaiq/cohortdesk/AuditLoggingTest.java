@@ -2,8 +2,7 @@ package com.github.tiancaiq.cohortdesk;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tiancaiq.cohortdesk.aspect.RecordLogAspect;
-import com.github.tiancaiq.cohortdesk.mapper.LoginLogMapper;
-import com.github.tiancaiq.cohortdesk.mapper.OperateLogMapper;
+import com.github.tiancaiq.cohortdesk.persistence.AuditRepository;
 import com.github.tiancaiq.cohortdesk.model.Emp;
 import com.github.tiancaiq.cohortdesk.model.LoginInfo;
 import com.github.tiancaiq.cohortdesk.model.LoginLog;
@@ -32,9 +31,9 @@ class AuditLoggingTest {
 
     @Test
     void loginAuditKeepsOutcomeButNeverCredentials() throws Throwable {
-        LoginLogMapper loginMapper = mock(LoginLogMapper.class);
+        AuditRepository repository = mock(AuditRepository.class);
         RecordLogAspect aspect = new RecordLogAspect(
-                loginMapper, new ObjectMapper(), mock(OperateLogMapper.class));
+                repository, new ObjectMapper());
         ProceedingJoinPoint joinPoint = mock(ProceedingJoinPoint.class);
         Emp employee = new Emp();
         employee.setUsername("alex");
@@ -46,7 +45,7 @@ class AuditLoggingTest {
         aspect.recordLoginLog(joinPoint);
 
         ArgumentCaptor<LoginLog> saved = ArgumentCaptor.forClass(LoginLog.class);
-        verify(loginMapper).insert(saved.capture());
+        verify(repository).saveLogin(saved.capture());
         assertEquals("alex", saved.getValue().getUsername());
         assertEquals((short) 1, saved.getValue().getIsSuccess());
         assertTrue(saved.getValue().getCostTime() >= 0);
@@ -54,9 +53,9 @@ class AuditLoggingTest {
 
     @Test
     void operationAuditRedactsPasswordArgumentsAndResponseData() throws Throwable {
-        OperateLogMapper operateMapper = mock(OperateLogMapper.class);
+        AuditRepository repository = mock(AuditRepository.class);
         RecordLogAspect aspect = new RecordLogAspect(
-                mock(LoginLogMapper.class), new ObjectMapper(), operateMapper);
+                repository, new ObjectMapper());
         ProceedingJoinPoint joinPoint = mock(ProceedingJoinPoint.class);
         Signature signature = mock(Signature.class);
         when(joinPoint.getTarget()).thenReturn(new Object());
@@ -71,7 +70,7 @@ class AuditLoggingTest {
         aspect.recordOperateLog(joinPoint, null);
 
         ArgumentCaptor<OperateLog> saved = ArgumentCaptor.forClass(OperateLog.class);
-        verify(operateMapper).insert(saved.capture());
+        verify(repository).saveOperation(saved.capture());
         assertEquals(10, saved.getValue().getOperateEmpId());
         assertFalse(saved.getValue().getMethodParams().contains("secret"));
         assertFalse(saved.getValue().getReturnValue().contains("sensitive-jwt"));

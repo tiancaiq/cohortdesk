@@ -4,10 +4,8 @@ import com.github.tiancaiq.cohortdesk.model.OperateLog;
 import com.github.tiancaiq.cohortdesk.model.PageResult;
 import com.github.tiancaiq.cohortdesk.model.dto.OperateLogQueryParam;
 import com.github.tiancaiq.cohortdesk.model.vo.OperateLogSummaryVO;
-import com.github.tiancaiq.cohortdesk.mapper.OperateLogMapper;
+import com.github.tiancaiq.cohortdesk.persistence.AuditRepository;
 import com.github.tiancaiq.cohortdesk.service.OperateLogService;
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,35 +19,23 @@ public class OperateLogServiceImpl implements OperateLogService {
 
 
 
-    private final OperateLogMapper operateLogMapper;
+    private final AuditRepository repository;
 
 
     @Autowired
-    public OperateLogServiceImpl( OperateLogMapper operateLogMapper ){
-        this.operateLogMapper = operateLogMapper;
+    public OperateLogServiceImpl( AuditRepository repository ){
+        this.repository = repository;
     }
 
 
     @Override
     public PageResult page( OperateLogQueryParam queryParam ){
-        PageHelper.startPage( queryParam.getPage(), queryParam.getPageSize() );
-
-        List< OperateLog > logList = operateLogMapper.selectByQuery( queryParam );
-        Page< OperateLog > logPage = ( Page< OperateLog> ) logList;
-
-        return new PageResult( logPage.getTotal(), logPage.getResult() );
+        return repository.pageOperations(queryParam);
     }
 
     @Override
     public OperateLogSummaryVO getSummaryData(){
-        OperateLogSummaryVO summaryData = new OperateLogSummaryVO();
-
-        summaryData.setTotalCount( operateLogMapper.countAll() );
-        summaryData.setTodayCount( operateLogMapper.countToday() );
-        summaryData.setTotalTypeCounts( operateLogMapper.countTotalOperateTypes() );
-        summaryData.setAvgCostTimes( operateLogMapper.selectAvgCostTimes() );
-
-        return summaryData;
+        return repository.operationSummary();
     }
 
 

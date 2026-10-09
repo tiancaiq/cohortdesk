@@ -7,11 +7,8 @@ import com.github.tiancaiq.cohortdesk.model.PageResult;
 import com.github.tiancaiq.cohortdesk.model.dto.EmpQueryParam;
 import com.github.tiancaiq.cohortdesk.util.JwtUtils;
 import com.github.tiancaiq.cohortdesk.exception.BusinessException;
-import com.github.tiancaiq.cohortdesk.mapper.EmpExprMapper;
-import com.github.tiancaiq.cohortdesk.mapper.EmpMapper;
+import com.github.tiancaiq.cohortdesk.persistence.CoreRepository;
 import com.github.tiancaiq.cohortdesk.service.EmpService;
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,32 +29,25 @@ public class EmpServiceImpl implements EmpService {
 
 
 
-    private final EmpExprMapper empExprMapper;
-    private final EmpMapper empMapper;
+    private final CoreRepository repository;
 
 
     @Autowired
-    public EmpServiceImpl( EmpMapper empMapper, EmpExprMapper empExprMapper ){
-        this.empMapper = empMapper;
-        this.empExprMapper = empExprMapper;
+    public EmpServiceImpl( CoreRepository repository ){
+        this.repository = repository;
     }
 
 
     @Override
     public List< Emp > list(){
-        List< Emp > empList = empMapper.selectAll();
+        List< Emp > empList = repository.listEmployees();
         return empList;
     }
 
 
     @Override
     public PageResult page( EmpQueryParam queryParam ){
-        PageHelper.startPage( queryParam.getPage(), queryParam.getPageSize() );
-
-        List< Emp > empList = empMapper.selectByQuery( queryParam );
-        Page< Emp > empPage = ( Page< Emp> ) empList;
-
-        return new PageResult( empPage.getTotal(), empPage.getResult() );
+        return repository.pageEmployees(queryParam);
     }
 
     @Transactional( rollbackFor = Exception.class )
@@ -66,13 +56,13 @@ public class EmpServiceImpl implements EmpService {
         emp.setCreateTime( LocalDateTime.now() );
         emp.setUpdateTime( LocalDateTime.now() );
 
-        empMapper.insert( emp );
+        repository.saveEmployee( emp );
 
         Integer empId = emp.getId();
         List< EmpExpr > exprList = emp.getExprList();
         if(!CollectionUtils.isEmpty(exprList)){
             exprList.forEach(empExpr -> empExpr.setEmpId(empId));
-            empExprMapper.insertBatch(exprList);
+            repository.saveExperience(exprList);
         }
     }
 
@@ -80,8 +70,8 @@ public class EmpServiceImpl implements EmpService {
     @Override
     public void deleteByIds( List< Integer > ids ){
         ids = ids.stream().distinct().toList();
-        empExprMapper.deleteBatchByEmpIds( ids );
-        int affectedRows = empMapper.deleteBatch( ids );
+        repository.deleteExperience( ids );
+        int affectedRows = repository.deleteEmployees( ids );
         if ( affectedRows != ids.size() ){
             throw new BusinessException( "Some employees do not exist. Deletion failed" );
         }
@@ -89,8 +79,9 @@ public class EmpServiceImpl implements EmpService {
 
     @Override
     public Emp getInfo( Integer id ){
-        Emp emp = empMapper.selectById( id );
-        List< EmpExpr > empExprList = empExprMapper.findByEmpId( id );
+        Emp emp = repository.findEmployee( id );
+        if (emp == null) return null;
+        List< EmpExpr > empExprList = repository.experienceFor( id );
         emp.setExprList( empExprList );
         return emp;
     }
@@ -99,21 +90,21 @@ public class EmpServiceImpl implements EmpService {
     @Override
     public void update( Emp emp ){
         emp.setUpdateTime(LocalDateTime.now());
-        empMapper.updateById(emp);
+        repository.updateEmployee(emp);
 
-        empExprMapper.deleteBatchByEmpIds( Arrays.asList( emp.getId() ) );
+        repository.deleteExperience( Arrays.asList( emp.getId() ) );
 
         Integer empId = emp.getId();
         List<EmpExpr> exprList = emp.getExprList();
         if(!CollectionUtils.isEmpty(exprList)){
             exprList.forEach(empExpr -> empExpr.setEmpId(empId));
-            empExprMapper.insertBatch(exprList);
+            repository.saveExperience(exprList);
         }
     }
 
     @Override
     public LoginInfo login( Emp emp ){
-        Emp empLogin = empMapper.selectByUsernameAndPassword( emp.getUsername(), emp.getPassword() );
+        Emp empLogin = repository.authenticate( emp.getUsername(), emp.getPassword() );
         if ( empLogin == null ){
             return null;
         }
@@ -133,7 +124,7 @@ public class EmpServiceImpl implements EmpService {
                 || newPassword == null || newPassword.isBlank()) {
             throw new BusinessException("Enter both passwords.");
         }
-        Emp emp = empMapper.selectById( empId );
+        Emp emp = repository.findEmployee( empId );
         if ( emp == null ){
             throw new BusinessException( "Employee not found" );
         }
@@ -142,7 +133,7 @@ public class EmpServiceImpl implements EmpService {
             throw new BusinessException( "Current password is incorrect" );
         }
 
-        empMapper.updatePasswordById( empId, newPassword );
+        repository.updatePassword( empId, newPassword );
     }
 
 

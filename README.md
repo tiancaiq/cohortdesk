@@ -58,7 +58,7 @@ On a fresh seed, the response contains six employees. See the [API reference](as
 
 | Layer | Tools |
 | --- | --- |
-| Backend | Java 21 target, Spring Boot 3.5, MyBatis, Maven |
+| Backend | Java 21 target, Spring Boot 3.5, Hibernate ORM (JPA), Maven |
 | Database | MySQL 8 |
 | Frontend | React 19, React Router 7, Vite 8, Axios, ECharts |
 | File upload | Aliyun OSS integration (optional credentials required) |
@@ -66,6 +66,8 @@ On a fresh seed, the response contains six employees. See the [API reference](as
 ## Run locally
 
 The English demo database is separate from the original database. Its name is `cohortdesk_demo`, and the seed file contains synthetic names and activity.
+
+The API maps the existing MySQL tables with JPA entities and uses Hibernate for CRUD, pagination, and report queries. Hibernate is configured to leave the schema unchanged; import the seed before starting the API.
 
 ### 1. Start MySQL
 
@@ -110,7 +112,7 @@ JWTs use a random signing key for each backend run, so restarting the backend si
 
 ## Project structure
 
-- `cohortdesk-api/`: controllers, services, MyBatis mappers, logging, and configuration
+- `cohortdesk-api/`: controllers, services, Hibernate repositories, logging, and configuration
 - `cohortdesk-model/`: entities, request objects, and response objects
 - `cohortdesk-util/`: JWT and Aliyun OSS helpers
 - `frontend/`: React application
