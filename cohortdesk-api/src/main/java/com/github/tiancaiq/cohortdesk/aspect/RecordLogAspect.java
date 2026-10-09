@@ -3,9 +3,9 @@ package com.github.tiancaiq.cohortdesk.aspect;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tiancaiq.cohortdesk.model.Emp;
 import com.github.tiancaiq.cohortdesk.model.LoginLog;
-import com.github.tiancaiq.cohortdesk.model.LoginInfo;
 import com.github.tiancaiq.cohortdesk.model.OperateLog;
 import com.github.tiancaiq.cohortdesk.model.Result;
+import com.github.tiancaiq.cohortdesk.model.dto.PasswordDto;
 import com.github.tiancaiq.cohortdesk.util.CurrentHolder;
 import com.github.tiancaiq.cohortdesk.annotation.LogOperation;
 import com.github.tiancaiq.cohortdesk.mapper.LoginLogMapper;
@@ -21,7 +21,6 @@ import java.time.LocalDateTime;
 @Slf4j
 @Aspect
 @Component
-//@Order( 2 )
 public class RecordLogAspect {
 
 
@@ -64,20 +63,21 @@ public class RecordLogAspect {
             operateLog.setCostTime(costTime);
 
             try {
-                operateLog.setMethodParams(jsonMapper.writeValueAsString(joinPoint.getArgs()));
+                Object[] args = joinPoint.getArgs() == null ? new Object[0] : joinPoint.getArgs();
+                String params = java.util.Arrays.stream(args).anyMatch(arg -> arg instanceof PasswordDto)
+                        ? "[Password change details redacted]"
+                        : jsonMapper.writeValueAsString(args);
+                operateLog.setMethodParams(params.length() <= 1000 ? params : "[Parameters omitted: too large]");
             } catch (Exception e) {
                 operateLog.setMethodParams("[Could not serialize parameters]");
             }
 
             if (exception != null) {
-                operateLog.setReturnValue("Error: " + exception.getClass().getSimpleName()
-                        + " - " + exception.getMessage());
+                operateLog.setReturnValue("Error: " + exception.getClass().getSimpleName());
             } else {
-                try {
-                    operateLog.setReturnValue(jsonMapper.writeValueAsString(result));
-                } catch (Exception e) {
-                    operateLog.setReturnValue("[Could not serialize response]");
-                }
+                operateLog.setReturnValue(result instanceof Result<?> response
+                        ? "Result code: " + response.getCode()
+                        : "Completed");
             }
 
             try {
@@ -98,7 +98,6 @@ public class RecordLogAspect {
         if (args != null && args.length > 0 && args[0] instanceof Emp) {
             Emp emp = (Emp) args[0];
             loginLog.setUsername(emp.getUsername());
-            loginLog.setPassword(emp.getPassword());
         }
 
         long startTime = System.currentTimeMillis();
@@ -114,9 +113,6 @@ public class RecordLogAspect {
                 boolean success = (result.getCode() == 1);
                 loginLog.setIsSuccess(success ? (short) 1 : (short) 0);
 
-                if (success && result.getData() instanceof LoginInfo) {
-                    loginLog.setJwt(((LoginInfo) result.getData()).getToken());
-                }
             }
         } catch (Throwable e) {
             loginLog.setCostTime(System.currentTimeMillis() - startTime);

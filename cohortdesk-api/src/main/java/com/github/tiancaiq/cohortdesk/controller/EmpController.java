@@ -64,7 +64,7 @@ public  class EmpController {
     @LogOperation
     @PostMapping
     public Result< Emp > save( @RequestBody Emp emp ){
-        log.info( "Add employee: {}", emp );
+        log.info( "Add employee: username={}", emp.getUsername() );
         empService.save( emp );
         return Result.success( emp );
     }
@@ -80,7 +80,7 @@ public  class EmpController {
     @LogOperation
     @PutMapping
     public Result< Emp > update( @RequestBody Emp emp ){
-        log.info( "Update employee: {}", emp );
+        log.info( "Update employee: id={}", emp.getId() );
         empService.update( emp );
         return Result.success( emp );
     }
@@ -88,7 +88,7 @@ public  class EmpController {
     @LogOperation
     @PutMapping( "/password" )
     public Result< Object > updatePassword( @RequestBody PasswordDto passwordDto ){
-        log.info( "Change employee password, Request data: {}", passwordDto );
+        log.info( "Change employee password: id={}", CurrentHolder.getCurrentId() );
         Integer empId = CurrentHolder.getCurrentId();
         String oldPassword = passwordDto.getOldPassword();
         String newPassword = passwordDto.getNewPassword();

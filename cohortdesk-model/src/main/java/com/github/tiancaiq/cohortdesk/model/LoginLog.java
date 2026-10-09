@@ -12,9 +12,7 @@ import java.time.LocalDateTime;
 public class LoginLog {
     private Integer id; //ID
     private String username;
-    private String password;
     private LocalDateTime loginTime;
     private Short isSuccess;
-    private String jwt;
     private Long costTime;
 }

@@ -6,7 +6,7 @@
 
     <select id="selectByQuery" resultType="com.github.tiancaiq.cohortdesk.model.LoginLog">
 
-        SELECT id, username, login_time, is_success, jwt, cost_time
+        SELECT id, username, login_time, is_success, cost_time
         FROM emp_login_log
 
         <where>
@@ -17,7 +17,7 @@
                 AND login_time >= #{beginDate}
             </if>
             <if test="endDate != null">
-                AND login_time &lt;= #{endDate}
+                AND login_time &lt; DATE_ADD(#{endDate}, INTERVAL 1 DAY)
             </if>
         </where>
 
@@ -26,7 +26,7 @@
     </select>
 
     <select id="countTodayLogin" resultType="java.lang.Long">
-        SELECT COUNT( DISTINCT username )
+        SELECT COUNT(*)
         FROM emp_login_log
         WHERE login_time >= CURDATE()
         AND login_time &lt; DATE_ADD(CURDATE(), INTERVAL 1 DAY)
@@ -34,7 +34,7 @@
     </select>
 
     <select id="countTodayFail" resultType="java.lang.Long">
-        SELECT COUNT( username )
+        SELECT COUNT(*)
         FROM emp_login_log
         WHERE is_success = 0
         AND login_time >= CURDATE()

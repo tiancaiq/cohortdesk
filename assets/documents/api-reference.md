@@ -19,6 +19,8 @@ Most endpoints return:
 
 `code: 1` indicates success; `code: 0` indicates an application error. Paged results use `data.total` and `data.rows`.
 
+Incorrect credentials and missing, invalid, or expired tokens return HTTP 401 with `code: 0`. Validation errors return HTTP 400.
+
 ## Authentication
 
 | Method | Path | Request | Result |
@@ -53,7 +55,7 @@ Example login:
 | PUT | `/emps` | Update an employee |
 | DELETE | `/emps?ids=1,2` | Delete employees by ID |
 
-Employee JSON fields include `username`, `password`, `name`, `gender`, `phone`, `job`, `salary`, `image`, `entryDate`, `deptId`, and `exprList`. Work experience items use `company`, `job`, `begin`, and `end`.
+Employee JSON fields include `username`, `name`, `gender`, `phone`, `job`, `salary`, `image`, `entryDate`, `deptId`, and `exprList`. Work experience items use `company`, `job`, `begin`, and `end`. Passwords are never returned; use `PUT /emps/password` to change the signed-in employee's password.
 
 ## Cohorts
 
@@ -98,6 +100,8 @@ Learner JSON fields include `name`, `no` (learner ID), `gender`, `phone`, `idCar
 | GET | `/logs/operation/summary` | Operation totals and timing |
 | GET | `/logs/login` | Paged login logs; `username`, `beginDate`, `endDate`, `page`, `pageSize` |
 | GET | `/logs/login/summary` | Login outcomes and totals |
+
+Login logs contain the username, time, outcome, and duration. Operation logs record the employee, action, time, and outcome; password-change parameters and response payloads are excluded.
 
 ## Upload
 

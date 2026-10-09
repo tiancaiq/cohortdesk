@@ -19,7 +19,7 @@
                 AND o.operate_time >= #{beginDate}
             </if>
             <if test="endDate != null">
-                AND o.operate_time &lt;= #{endDate}
+                AND o.operate_time &lt; DATE_ADD(#{endDate}, INTERVAL 1 DAY)
             </if>
         </where>
 
@@ -54,7 +54,7 @@
             ELSE method_name
             END ) AS type, avg( cost_time ) AS avgTime
         FROM operate_log
-        GROUP BY method_name
+        GROUP BY type
         ORDER BY avgTime DESC, type ASC
 
     </select>

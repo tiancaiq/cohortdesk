@@ -106,6 +106,8 @@ Use the credentials in [Demo](#demo).
 
 The frontend proxies `/api` requests to the backend on port 8081.
 
+JWTs use a random signing key for each backend run, so restarting the backend signs everyone out. To keep sessions valid across restarts, set `COHORTDESK_JWT_SECRET` to a private value of at least 32 bytes before starting Java.
+
 ## Project structure
 
 - `cohortdesk-api/`: controllers, services, MyBatis mappers, logging, and configuration
@@ -117,7 +119,7 @@ The frontend proxies `/api` requests to the backend on port 8081.
 
 ## Current limitations
 
-This remains a local learning project. Passwords in the demo database are stored in plain text, and the authentication and logging code require security work before any public deployment. Avatar uploads require `OSS_ACCESS_KEY_ID` and `OSS_ACCESS_KEY_SECRET` plus a valid Aliyun OSS bucket. The current interface also retains the original demo's field model, including some fields specific to its course setting.
+This remains a local learning project. Passwords in the demo database are stored in plain text, and any signed-in employee can use the management endpoints; add role checks before any public deployment. New login logs omit passwords and tokens. For a database imported before this change, clear older log values with `UPDATE cohortdesk_demo.emp_login_log SET password = NULL, jwt = NULL;`. Avatar uploads require `OSS_ACCESS_KEY_ID` and `OSS_ACCESS_KEY_SECRET` plus a valid Aliyun OSS bucket. The current interface also retains the original demo's field model, including some fields specific to its course setting.
 
 The `assets/prototype` directory and original `Tlias-*` demo media remain as legacy course artifacts. They are not used by the running application and still contain Chinese text. The screenshots above show the current English React app.
 

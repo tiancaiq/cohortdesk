@@ -30,20 +30,12 @@ spring:
 
 mybatis:
   configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     map-underscore-to-camel-case: true
 
 
 pagehelper:
   reasonable: true
   helper-dialect: mysql
-
-
-logging:
-  level:
-    org.springframework.jdbc.support.JdbcTransactionManager: debug
-#    root: INFO
-#    com.yourpackage: DEBUG
 
 
 aliyun:

@@ -58,10 +58,8 @@ CREATE TABLE `emp_expr` (
 CREATE TABLE `emp_login_log` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `username` varchar(20) DEFAULT NULL,
-  `password` varchar(32) DEFAULT NULL,
   `login_time` datetime DEFAULT NULL,
   `is_success` tinyint unsigned DEFAULT NULL,
-  `jwt` varchar(1000) DEFAULT NULL,
   `cost_time` bigint unsigned DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -146,12 +144,12 @@ INSERT INTO student (id, name, no, gender, phone, id_card, is_college, address, 
 (11, 'Zoe Turner', '2026000011', 2, '55510000011', 'DEMO00000000000011', 1, 'Madison, WI', 4, '2025-06-01', 6, 0, 0, NOW(), NOW()),
 (12, 'Mila Davis', '2026000012', 2, '55510000012', 'DEMO00000000000012', 0, 'Boise, ID', 4, '2025-06-01', 0, 0, 0, NOW(), NOW());
 
-INSERT INTO emp_login_log (id, username, password, login_time, is_success, jwt, cost_time) VALUES
-(1, 'linchong', NULL, '2026-10-08 08:30:00', 1, NULL, 54),
-(2, 'miachen', NULL, '2026-10-08 09:10:00', 1, NULL, 62),
-(3, 'unknown', NULL, '2026-10-08 09:25:00', 0, NULL, 28),
-(4, 'linchong', NULL, '2026-10-09 08:15:00', 1, NULL, 48),
-(5, 'unknown', NULL, '2026-10-09 08:20:00', 0, NULL, 31);
+INSERT INTO emp_login_log (id, username, login_time, is_success, cost_time) VALUES
+(1, 'linchong', '2026-10-08 08:30:00', 1, 54),
+(2, 'miachen', '2026-10-08 09:10:00', 1, 62),
+(3, 'unknown', '2026-10-08 09:25:00', 0, 28),
+(4, 'linchong', '2026-10-09 08:15:00', 1, 48),
+(5, 'unknown', '2026-10-09 08:20:00', 0, 31);
 
 INSERT INTO operate_log (id, operate_emp_id, operate_time, class_name, method_name, method_params, return_value, cost_time) VALUES
 (1, 10, '2026-10-08 10:00:00', 'StudentController', 'save', '[]', 'success', 32),
