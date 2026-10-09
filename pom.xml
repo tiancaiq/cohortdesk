@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.5.10</version>
+        <relativePath/> 
+    </parent>
+
+    
+    <groupId>com.github.tiancaiq</groupId>
+    <artifactId>tlias-management</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    
+    <packaging>pom</packaging>
+
+    
+    
+    <modules>
+        <module>tlias-pojo</module>
+        <module>tlias-util</module>
+        <module>tlias-business</module>
+    </modules>
+
+    
+    
+    <properties>
+        
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <java.version>21</java.version>
+        <!-- JDK 23+ no longer discovers annotation processors by default. -->
+        <maven.compiler.proc>full</maven.compiler.proc>
+
+        
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        
+        <tlias.version>${project.version}</tlias.version>
+
+        <!-- ── Spring Boot ── -->
+        
+        <spring-boot-starter.version>3.5.11</spring-boot-starter.version>
+
+        
+        <lombok.version>1.18.44</lombok.version>
+
+        <!-- ── MyBatis ── -->
+        <mybatis-spring-boot.version>3.0.5</mybatis-spring-boot.version>
+
+        
+        <pagehelper-spring-boot.version>1.4.7</pagehelper-spring-boot.version>
+
+        <!-- ── JWT ── -->
+        <jjwt.version>0.9.1</jjwt.version>
+
+        
+        <aliyun.oss.version>3.18.5</aliyun.oss.version>
+
+        
+        <jaxb-api.version>2.3.1</jaxb-api.version>
+        <javax.activation.version>1.1.1</javax.activation.version>
+        <jaxb-runtime.version>2.3.3</jaxb-runtime.version>
+    </properties>
+
+    
+    
+    <dependencies>
+        
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+            <version>${spring-boot-starter.version}</version>
+        </dependency>
+
+        
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    
+    
+    <dependencyManagement>
+        <dependencies>
+
+            
+            
+            <dependency>
+                <groupId>com.github.tiancaiq</groupId>
+                <artifactId>tlias-pojo</artifactId>
+                <version>${tlias.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.tiancaiq</groupId>
+                <artifactId>tlias-util</artifactId>
+                <version>${tlias.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.tiancaiq</groupId>
+                <artifactId>tlias-business</artifactId>
+                <version>${tlias.version}</version>
+            </dependency>
+
+            <!-- ── MyBatis Spring Boot Starter ── -->
+            <!-- Source: https://mvnrepository.com/artifact/org.mybatis.spring.boot/mybatis-spring-boot-starter -->
+            <dependency>
+                <groupId>org.mybatis.spring.boot</groupId>
+                <artifactId>mybatis-spring-boot-starter</artifactId>
+                <version>${mybatis-spring-boot.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.mybatis.spring.boot</groupId>
+                <artifactId>mybatis-spring-boot-starter-test</artifactId>
+                <version>${mybatis-spring-boot.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            
+            <!-- Source: https://mvnrepository.com/artifact/com.github.pagehelper/pagehelper-spring-boot-starter -->
+            <dependency>
+                <groupId>com.github.pagehelper</groupId>
+                <artifactId>pagehelper-spring-boot-starter</artifactId>
+                <version>${pagehelper-spring-boot.version}</version>
+            </dependency>
+
+            
+            <!-- Source: https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt -->
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
+
+            
+            <!-- Source: https://mvnrepository.com/artifact/com.aliyun.oss/aliyun-sdk-oss -->
+            <dependency>
+                <groupId>com.aliyun.oss</groupId>
+                <artifactId>aliyun-sdk-oss</artifactId>
+                <version>${aliyun.oss.version}</version>
+            </dependency>
+
+            
+            <!-- JAXB API -->
+            <dependency>
+                <groupId>javax.xml.bind</groupId>
+                <artifactId>jaxb-api</artifactId>
+                <version>${jaxb-api.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>javax.activation</groupId>
+                <artifactId>activation</artifactId>
+                <version>${javax.activation.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.glassfish.jaxb</groupId>
+                <artifactId>jaxb-runtime</artifactId>
+                <version>${jaxb-runtime.version}</version>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
+</project>
