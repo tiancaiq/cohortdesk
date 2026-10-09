@@ -1,4 +1,4 @@
-# Tlias React frontend
+# CohortDesk React frontend
 
 React 19 and Vite 8 frontend for the training operations dashboard. It uses React Router for navigation, Axios for the existing Spring Boot API, and ECharts for reports.
 

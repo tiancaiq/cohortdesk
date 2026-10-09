@@ -11,7 +11,7 @@ const modules = [
 ]
 
 export function Dashboard() {
-  return <div className="dashboard-page"><PageHeader eyebrow="TLIAS / OPERATIONS" title="Training operations" description="Manage cohorts, people, and reports from one workspace." />
+  return <div className="dashboard-page"><PageHeader eyebrow="COHORTDESK / OPERATIONS" title="Training operations" description="Manage cohorts, people, and reports from one workspace." />
     <div className="section-heading"><span>WORK AREAS</span><span>06 MODULES</span></div>
     <div className="module-grid">{modules.map(([title, description, path, group, symbol]) => <Link to={path} key={path} className="module-card"><div className="module-top"><span>{group}</span><span className="module-arrow">↗</span></div><div><span className="module-symbol">{symbol}</span><h2>{title}</h2><p>{description}</p></div></Link>)}</div>
     <div className="dashboard-footer"><span>Need an audit trail?</span><Link to="/log/operate">View operation log →</Link></div>

@@ -1,0 +1,56 @@
+# ===================================================================
+# Application Configuration
+# Maintained by: tiancaiq
+# Original configuration by: existed-name (2026/1/29)
+# ===================================================================
+
+server:
+  port: 8081
+
+
+spring:
+  application:
+    name: cohortdesk
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 100MB
+
+  output:
+    ansi:
+      enabled: always
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/cohortdesk_demo?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: root # dev
+    password: 123456
+
+
+mybatis:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: true
+
+
+pagehelper:
+  reasonable: true
+  helper-dialect: mysql
+
+
+logging:
+  level:
+    org.springframework.jdbc.support.JdbcTransactionManager: debug
+#    root: INFO
+#    com.yourpackage: DEBUG
+
+
+aliyun:
+  oss:
+    endpoint: https://oss-cn-beijing.aliyuncs.com
+    bucketName: javaweb-learning-20260306
+    region: cn-beijing
+
+
+

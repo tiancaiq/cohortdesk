@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.tiancaiq.cohortdesk.mapper.OperateLogMapper">
+
+    <select id="selectByQuery" resultType="com.github.tiancaiq.cohortdesk.model.OperateLog">
+
+        SELECT o.id, o.operate_emp_id, o.operate_time, o.class_name, o.method_name, o.method_params, o.return_value, o.cost_time, e.name AS operateEmpName
+        FROM operate_log AS o
+        LEFT JOIN emp AS e
+        ON o.operate_emp_id = e.id
+
+        <where>
+            <if test="operateEmpId != null">
+                e.id = #{operateEmpId}
+            </if>
+            <if test="beginDate != null">
+                AND o.operate_time >= #{beginDate}
+            </if>
+            <if test="endDate != null">
+                AND o.operate_time &lt;= #{endDate}
+            </if>
+        </where>
+
+        ORDER BY o.id DESC
+
+    </select>
+
+    <select id="countTotalOperateTypes" resultType="com.github.tiancaiq.cohortdesk.model.vo.OperateLogSummaryVO$TypeCountVO">
+
+        SELECT
+        ( CASE
+            WHEN method_name LIKE 'save%' OR method_name LIKE 'add%' THEN 'Create'
+            WHEN method_name LIKE 'delete%' OR method_name LIKE 'remove' THEN 'Delete'
+            WHEN method_name LIKE 'update%' THEN 'Edit'
+            WHEN method_name LIKE 'upload%' THEN 'Upload File'
+            ELSE method_name
+            END ) AS type, count( 0 ) AS count
+        FROM operate_log
+        GROUP BY type
+        ORDER BY count ASC, type ASC
+
+    </select>
+
+    <select id="selectAvgCostTimes" resultType="com.github.tiancaiq.cohortdesk.model.vo.OperateLogSummaryVO$AvgCostVO">
+
+        SELECT
+        ( CASE
+            WHEN method_name LIKE 'save%' OR method_name LIKE 'add%' THEN 'Create'
+            WHEN method_name LIKE 'delete%' OR method_name LIKE 'remove' THEN 'Delete'
+            WHEN method_name LIKE 'update%' THEN 'Edit'
+            WHEN method_name LIKE 'upload%' THEN 'Upload File'
+            ELSE method_name
+            END ) AS type, avg( cost_time ) AS avgTime
+        FROM operate_log
+        GROUP BY method_name
+        ORDER BY avgTime DESC, type ASC
+
+    </select>
+
+</mapper>

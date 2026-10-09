@@ -1,10 +1,10 @@
-# Tlias Training Operations Dashboard
+# CohortDesk
 
-A full-stack admin application for managing training cohorts, learners, employees, departments, and operational reports.
+A full-stack training operations dashboard for managing cohorts, learners, employees, departments, and reports.
 
 Maintained by [tiancaiq](https://github.com/tiancaiq).
 
-> **Project origin:** This project began with the Tlias application from the 2024 Heima Java Web course. The frontend was subsequently rewritten in React, with a new dashboard, password-change flow, additional reporting, validation, and exception handling. This English-language edition is a local demo, not a production deployment.
+> **Project origin:** CohortDesk is an English-language adaptation of the Tlias application from the 2024 Heima Java Web course. The frontend was subsequently rewritten in React, with a new dashboard, password-change flow, additional reporting, validation, and exception handling. This is a local demo, not a production deployment.
 
 ## What it does
 
@@ -25,30 +25,30 @@ Maintained by [tiancaiq](https://github.com/tiancaiq).
 
 ## Run locally
 
-The English demo database is separate from the original database. Its name is `tlias_en`, and the seed file contains synthetic names and activity.
+The English demo database is separate from the original database. Its name is `cohortdesk_demo`, and the seed file contains synthetic names and activity.
 
 ### 1. Start MySQL
 
 With Docker Desktop running:
 
 ```powershell
-docker run --name tlias-mysql -e MYSQL_ROOT_PASSWORD=123456 -p 127.0.0.1:3306:3306 -d mysql:8.4
-docker cp assets/database/tlias.sql tlias-mysql:/tmp/tlias.sql
-docker exec -e MYSQL_PWD=123456 tlias-mysql mysql -uroot -e "source /tmp/tlias.sql"
+docker run --name cohortdesk-mysql -e MYSQL_ROOT_PASSWORD=123456 -p 127.0.0.1:3306:3306 -d mysql:8.4
+docker cp assets/database/cohortdesk-demo.sql cohortdesk-mysql:/tmp/cohortdesk-demo.sql
+docker exec -e MYSQL_PWD=123456 cohortdesk-mysql mysql -uroot -e "source /tmp/cohortdesk-demo.sql"
 ```
 
-If the container already exists, run `docker start tlias-mysql`. The seed script is intended for a new `tlias_en` database and should only be imported once.
+If the container already exists, run `docker start cohortdesk-mysql`. The seed script is intended for a new `cohortdesk_demo` database and should only be imported once.
 
 ### 2. Build and start the backend
 
 Install a JDK of version 21 or newer. From the repository root:
 
 ```powershell
-./tlias-business/mvnw.cmd -f pom.xml -DskipTests clean package
-java -jar tlias-business/target/app.jar
+./cohortdesk-api/mvnw.cmd -f pom.xml -DskipTests clean package
+java -jar cohortdesk-api/target/app.jar
 ```
 
-The API listens on `http://127.0.0.1:8081`. Database settings are in `tlias-business/src/main/resources/application.yaml`.
+The API listens on `http://127.0.0.1:8081`. Database settings are in `cohortdesk-api/src/main/resources/application.yaml`.
 
 ### 3. Start the frontend
 
@@ -69,11 +69,11 @@ The frontend proxies `/api` requests to the backend on port 8081.
 
 ## Project structure
 
-- `tlias-business/`: controllers, services, MyBatis mappers, logging, and configuration
-- `tlias-pojo/`: entities, request objects, and response objects
-- `tlias-util/`: JWT and Aliyun OSS helpers
+- `cohortdesk-api/`: controllers, services, MyBatis mappers, logging, and configuration
+- `cohortdesk-model/`: entities, request objects, and response objects
+- `cohortdesk-util/`: JWT and Aliyun OSS helpers
 - `frontend/`: React application
-- `assets/database/tlias.sql`: synthetic English-language MySQL seed
+- `assets/database/cohortdesk-demo.sql`: synthetic English-language MySQL seed
 - `assets/documents/api-reference.md`: API endpoint reference
 
 ## Current limitations

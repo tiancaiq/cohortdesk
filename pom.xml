@@ -14,7 +14,7 @@
 
     
     <groupId>com.github.tiancaiq</groupId>
-    <artifactId>tlias-management</artifactId>
+    <artifactId>cohortdesk</artifactId>
     <version>1.0-SNAPSHOT</version>
     
     <packaging>pom</packaging>
@@ -22,9 +22,9 @@
     
     
     <modules>
-        <module>tlias-pojo</module>
-        <module>tlias-util</module>
-        <module>tlias-business</module>
+        <module>cohortdesk-model</module>
+        <module>cohortdesk-util</module>
+        <module>cohortdesk-api</module>
     </modules>
 
     
@@ -41,7 +41,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         
-        <tlias.version>${project.version}</tlias.version>
+        <cohortdesk.version>${project.version}</cohortdesk.version>
 
         <!-- ── Spring Boot ── -->
         
@@ -96,18 +96,18 @@
             
             <dependency>
                 <groupId>com.github.tiancaiq</groupId>
-                <artifactId>tlias-pojo</artifactId>
-                <version>${tlias.version}</version>
+                <artifactId>cohortdesk-model</artifactId>
+                <version>${cohortdesk.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.github.tiancaiq</groupId>
-                <artifactId>tlias-util</artifactId>
-                <version>${tlias.version}</version>
+                <artifactId>cohortdesk-util</artifactId>
+                <version>${cohortdesk.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.github.tiancaiq</groupId>
-                <artifactId>tlias-business</artifactId>
-                <version>${tlias.version}</version>
+                <artifactId>cohortdesk-api</artifactId>
+                <version>${cohortdesk.version}</version>
             </dependency>
 
             <!-- ── MyBatis Spring Boot Starter ── -->

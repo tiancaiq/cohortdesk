@@ -41,7 +41,7 @@ export function Layout() {
 
   return <div className="shell">
     <aside className="sidebar">
-      <div className="brand"><span className="brand-mark">T</span><div><strong>TLIAS</strong><small>TRAINING OPERATIONS</small></div></div>
+      <div className="brand"><span className="brand-mark">C</span><div><strong>COHORTDESK</strong><small>TRAINING OPERATIONS</small></div></div>
       <nav aria-label="Main navigation">
         {groups.map(group => <div className="nav-group" key={group.label}>
           <p>{group.label}</p>
