@@ -6,6 +6,40 @@ Maintained by [tiancaiq](https://github.com/tiancaiq).
 
 > **Project origin:** CohortDesk is an English-language adaptation of the Tlias application from the 2024 Heima Java Web course. The frontend was subsequently rewritten in React, with a new dashboard, password-change flow, additional reporting, validation, and exception handling. This is a local demo, not a production deployment.
 
+## Demo
+
+This demo runs locally. Follow [Run locally](#run-locally), then open `http://127.0.0.1:5173/login`.
+
+| Username | Password |
+| --- | --- |
+| `linchong` | `123456` |
+
+![CohortDesk dashboard showing the six work areas](assets/demo/cohortdesk-dashboard.png)
+
+[View cohort management](assets/demo/cohortdesk-cohorts.png) · [View employee analytics](assets/demo/cohortdesk-analytics.png)
+
+The included English seed starts with 5 departments, 6 employees, 6 cohorts, and 12 learners. All names and activity in the seed are synthetic.
+
+### Take a quick tour
+
+1. **Dashboard:** Open the six work areas from the home screen.
+2. **Cohorts and learners:** Browse cohorts, inspect their dates and leads, then filter and page through learner records.
+3. **Employees and departments:** View staff profiles, work experience, and department assignments.
+4. **Analytics:** Compare employee roles and learner enrollment in the report charts.
+5. **Activity:** Inspect login attempts and operation logs. Changes made in the demo appear in the operation log.
+
+### Try the API
+
+With the backend running, this PowerShell example signs in and lists the seeded employees:
+
+```powershell
+$session = Invoke-RestMethod -Uri 'http://127.0.0.1:8081/login' -Method Post -ContentType 'application/json' -Body '{"username":"linchong","password":"123456"}'
+$employees = Invoke-RestMethod -Uri 'http://127.0.0.1:8081/emps/list' -Headers @{ token = $session.data.token }
+$employees.data | Select-Object name, username
+```
+
+On a fresh seed, the response contains six employees. See the [API reference](assets/documents/api-reference.md) for more endpoints.
+
 ## What it does
 
 - Sign in and manage departments and employees.
@@ -62,8 +96,7 @@ npm run dev
 
 Open `http://127.0.0.1:5173/login`.
 
-**Demo username:** `linchong`  
-**Demo password:** `123456`
+Use the credentials in [Demo](#demo).
 
 The frontend proxies `/api` requests to the backend on port 8081.
 
@@ -80,7 +113,7 @@ The frontend proxies `/api` requests to the backend on port 8081.
 
 This remains a local learning project. Passwords in the demo database are stored in plain text, and the authentication and logging code require security work before any public deployment. Avatar uploads require `OSS_ACCESS_KEY_ID` and `OSS_ACCESS_KEY_SECRET` plus a valid Aliyun OSS bucket. The current interface also retains the original demo's field model, including some fields specific to its course setting.
 
-The `assets/prototype` directory and older demo media remain as legacy course artifacts. They are not used by the running application and still contain Chinese text. The app, demo database, and active documentation use English.
+The `assets/prototype` directory and original `Tlias-*` demo media remain as legacy course artifacts. They are not used by the running application and still contain Chinese text. The screenshots above show the current English React app.
 
 ## License
 
